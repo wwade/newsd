@@ -408,7 +408,7 @@ int Group::FindArticleByMessageID(const char *message_id, unsigned long &number)
 
 	for (number = 0, temp = Start(); temp <= End(); temp ++)
 	{
-            snprintf(line, sizeof(line), "%s/%lu", dirname.c_str(), temp);
+            snprintf(line, sizeof(line), "%s/%u", dirname.c_str(), temp);
 
 	    if ((fp = fopen(line, "r")) != NULL)
 	    {

@@ -967,7 +967,7 @@ int Server::Accept()
 #if defined(DARWIN) | defined(BSD)
     int length = sizeof(sin);
 #else
-    size_t length = sizeof(sin);
+    socklen_t length = sizeof(sin);
 #endif
 
     msgsock = accept(sock, (struct sockaddr*)&sin, &length);

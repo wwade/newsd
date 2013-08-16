@@ -22,6 +22,7 @@
 #include "everything.H"
 #include <stdarg.h>
 #include <syslog.h>
+#include <limits.h>
 
 
 // Initialize default configuration values...
@@ -389,7 +390,7 @@ void Configuration::FixNewsLogDir(const char* newslogdir)
 	    if ( chown(newslogdir, UID(), GID()) < 0 )
 	    {
 		fprintf(stderr, "newsd: Can't change perms on log directory: "
-				"chown(%s,%lu,&lu): %s\n",
+				"chown(%s,%u,%u): %s\n",
 				newslogdir, UID(), GID(), strerror(errno));
 	    }
 	}
@@ -578,7 +579,7 @@ int Configuration::Rotate(bool force)
 	// Include uid/euid info, incase error is permission related
 	{
             char junk[256];
-	    sprintf(junk, " (uid=%lu euid=%lu)", getuid(), geteuid());
+	    sprintf(junk, " (uid=%u euid=%u)", getuid(), geteuid());
 	    msg += junk;
 	}
 
@@ -636,10 +637,9 @@ void Configuration::LogMessage(int l, const char *m, ...)
     // Format the message...
     va_list      ap;			// Argument list pointer
     char         buffer[1024];		// Message buffer
-    unsigned int bytes;			// Size of message
 
     va_start(ap, m);
-    bytes = vsnprintf(buffer, sizeof(buffer), m, ap);
+    (void)vsnprintf(buffer, sizeof(buffer), m, ap);
     va_end(ap);
 
     // Send it to the log file or syslog...
