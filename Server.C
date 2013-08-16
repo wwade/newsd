@@ -747,9 +747,10 @@ int Server::CommandLoop(const char *overview[])
 	    // COLLECT POSTING FROM CLIENT
 	    int eom = 0;
 	    char c;
+	    ssize_t rc;
 	    string msg;
 
-	    while (read(msgsock, &c, 1) == 1 )
+	    while ((rc = read(msgsock, &c, 1)) == 1 )
 	    {
 		// KEEP TRACK OF #LINES
 		//    Lines longer than 80 chars count as multiple lines.
@@ -789,11 +790,31 @@ int Server::CommandLoop(const char *overview[])
 		    eom = 0;
 	    }
 
+	    if (rc < 0)
+	    {
+		G_conf.LogMessage(L_INFO, "Read error from %s (error = %s).",
+		    GetRemoteIPStr(), strerror(errno));
+		break;
+	    }
+	    else if (rc == 0)
+	    {
+		G_conf.LogMessage(L_INFO, "Read zero from %s.", GetRemoteIPStr());
+		break;
+	    }
+
 	    // POSTING TOO LONG? FAIL
 	    if ( toolong )
 	    {
 		sprintf(reply, "411 Not Posted: article exceeds sanity line limit of %d.", 
 		    (int)group.PostLimit());
+		Send(reply);
+		continue;
+	    }
+
+	    if ( eom != 3 )
+	    {
+		snprintf(reply, sizeof reply,
+		    "411 Not Posted: protocol error (missing end of message).");
 		Send(reply);
 		continue;
 	    }
