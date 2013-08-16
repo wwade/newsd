@@ -1,6 +1,11 @@
 newsd -- Change Log
 -------------------
 
+1.46 -- August 16, 2013
+	- When the client disconnects in the middle of posting
+	  an article, ensure that the partially received article
+	  is not saved.
+
 1.45 -- August 16, 2013
 	- Move code to github
 	- Fix compile errors on GCC 4

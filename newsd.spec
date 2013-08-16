@@ -23,7 +23,7 @@
 
 Summary: newsd usenet news server
 Name: newsd
-Version: 1.44
+Version: 1.46
 Release: 1
 Copyright: GPL
 Group: System Environment/Daemons
